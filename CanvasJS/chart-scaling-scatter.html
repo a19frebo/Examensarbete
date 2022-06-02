@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="canvasjs.min.js"></script>
+        <script src="../dataset/data_full.js"></script>
+        <script>
+        window.onload = function () {
+            
+            const numOfRegions = 22
+            //CHANGE HERE
+            const numOfCharts = 11
+            // :)
+            const regionsInChart = numOfRegions / numOfCharts
+
+            const region_data = {
+                Blekinge: [],
+                Dalarna: [],
+                Gotland: [],
+                Gavleborg: [],
+                Halland: [],
+                Jamtland_Harjedalen: [],
+                Jonkoping: [],
+                Kalmar: [],
+                Kronoberg: [],
+                Norrbotten: [],
+                Skane: [],
+                Stockholm: [],
+                Sormland: [],
+                Uppsala: [],
+                Varmland: [],
+                Vasterbotten: [],
+                Vasternorrland: [],
+                Vastmanland: [],
+                Vastra_Gotaland: [],
+                Orebro: [],
+                Ostergotland: [],
+                Totalt_antal_fall: []
+            }
+
+            let SlicedDataset = []
+            let chartEle = []
+            //Add elements to document
+            for(let i = 0; i < numOfCharts; i++){
+                let big = document.createElement("div")
+                big.setAttribute("id", `chart${i}`)
+                big.setAttribute("style", "height: 500px; max-width: 1000px;")
+                chartEle.push(big)
+                document.body.appendChild(big)
+                SlicedDataset.push([])
+            }
+
+            for(let i = 0; i < data.length; i++){
+                let datum = data[i].Statistikdatum
+                let datum_nums = datum.split("/")
+                delete data[i].Statistikdatum
+                
+                for(const region in data[i]){
+                    region_data[region].push({
+                        x: new Date(`20${datum_nums[2]}, ${datum_nums[0]}, ${datum_nums[1]}`),
+                        y: parseInt(data[i][region])
+                    })
+                }
+            }
+
+            //const final_data = []
+            let counter = 0
+            let arrayCount = 0
+            for(key in region_data){
+                SlicedDataset[arrayCount].push({
+                    type: 'scatter',
+                    axisYType: "secondary",
+                    name: key,
+                    showInLegend: true,
+                    yValueFormatString: "",
+                    dataPoints: region_data[key]
+                })
+                counter++
+                if(counter % regionsInChart == 0) arrayCount++
+            }
+
+            let chartDiv = document.getElementById(`chart${numOfCharts - 1}`)
+            console.time('Render time')
+            
+            for(let i = 0; i < SlicedDataset.length; i++){
+                let chart = new CanvasJS.Chart("chart" + i, {
+                    title: {
+                        text: "Covid Cases in Sweden"
+                    },
+                    axisX: {
+                        valueFormatString: "MMM YYYY"
+                    },
+                    axisY2: {
+                        title: "Covid Cases per Region",
+                        prefix: "",
+                        suffix: ""
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    legend: {
+                        cursor: "pointer",
+                        verticalAlign: "top",
+                        horizontalAlign: "center",
+                        dockInsidePlotArea: true,
+                        itemclick: toogleDataSeries
+                    },
+                    data: SlicedDataset[i]
+                });
+                chart.render();
+            }
+            const vall = setInterval(function(){
+                if(chartDiv.children.length > 0){
+                    console.timeEnd('Render time')
+                    clearInterval(vall)
+                }
+            }, 10)
+        }
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+        </script>
+    </head>
+    <body>
+        <!--<div id="chartContainer" style="height: 600px; max-width: 1200px; margin: 0px auto;"></div> -->
+    </body>
+</html>

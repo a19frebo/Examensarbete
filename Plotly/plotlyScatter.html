@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div id="chart" style="width:1000px;height:500px;"></div>
+        <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+        <script type="text/javascript" src="../data.js"></script>
+        <script>
+
+            const dates = [];
+            const cases = {   Totalt_antal_fall: [],
+                            Blekinge: [],
+                            Dalarna: [],
+                            Gotland: [],
+                            Gavleborg: [],
+                            Halland: [],
+                            Jamtland_Harjedalen: [],
+                            Jonkoping: [],
+                            Kalmar: [],
+                            Kronoberg: [],
+                            Norrbotten: [],
+                            Skane: [],
+                            Stockholm: [],
+                            Sormland: [],
+                            Uppsala: [],
+                            Varmland: [],
+                            Vasterbotten: [],
+                            Vasternorrland: [],
+                            Vastmanland: [],
+                            Vastra_Gotaland: [],
+                            Orebro: [],
+                            Ostergotland: []};
+
+            for(let i = 0; i < data.length; i++){
+                dates.push(data[i].Statistikdatum)
+               
+                
+                delete data[i].Statistikdatum
+
+                for(const region in data[i]){
+                    cases[region].push(parseInt(data[i][region]))
+                }
+                    
+            }
+
+            const dataset = []
+
+            for(const key in cases){
+                dataset.push({
+                    x: dates,
+                    y: cases[key],
+                    name: key,
+                    mode: 'markers',
+                    type: 'scatter'
+                })
+            }
+
+            console.time();
+
+            Plotly.newPlot('chart', dataset);
+            
+            let lastElement = document.getElementById("chart")
+
+            const myInterval = setInterval(function(){
+                if(lastElement.childNodes.length > 0) {
+                    console.timeEnd()
+                    clearInterval(myInterval)
+                }
+            }, 10);
+
+        </script>
+    </body>
+</html>

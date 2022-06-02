@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <script type="text/javascript" src="../data.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script>
+
+            for(let i = 0; i < 22; i++) {
+                let div = document.createElement("div")
+                div.setAttribute("id", "graph"+i)
+                div.setAttribute("style", "width: 1000px; height: 500px")
+                document.body.append(div);
+            }
+
+            let cases = {   
+                Totalt_antal_fall: [],
+                Blekinge: [],
+                Dalarna: [],
+                Gotland: [],
+                Gavleborg: [],
+                Halland: [],
+                Jamtland_Harjedalen: [],
+                Jonkoping: [],
+                Kalmar: [],
+                Kronoberg: [],
+                Norrbotten: [],
+                Skane: [],
+                Stockholm: [],
+                Sormland: [],
+                Uppsala: [],
+                Varmland: [],
+                Vasterbotten: [],
+                Vasternorrland: [],
+                Vastmanland: [],
+                Vastra_Gotaland: [],
+                Orebro: [],
+                Ostergotland: []
+            };
+
+            const timestamps = []
+            for(let i = 0; i < data.length; i++){
+                timestamps.push(data[i].Statistikdatum)
+                delete data[i].Statistikdatum
+                for(const region in data[i]){
+                    cases[region].push(parseInt(data[i][region]))
+                }
+            }
+
+            const dataset = []
+            for(const key in cases) {
+                dataset.push({
+                    name: key,
+                    data: cases[key]
+                })
+            }
+
+            console.time()
+
+            for(let i = 0; i < 22; i++) {
+                document.addEventListener('DOMContentLoaded', function () {
+                    const chart = Highcharts.chart('graph'+i, {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: timestamps
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Antal fall'
+                            }
+                        },
+                        series: dataset.slice(i,i+1)
+                    });
+                });
+            };
+
+            let lastElement = document.getElementById("graph21")
+
+            const myInterval = setInterval(function(){
+                if(lastElement.childNodes.length > 0) {
+                    console.timeEnd()
+                    clearInterval(myInterval)
+                }
+            }, 10);
+        </script>
+
+    </body>
+</html>

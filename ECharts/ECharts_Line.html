@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div id="main" style="width: 1000px; height: 500px" ></div>
+        
+        <script type="text/javascript" src="../dataset/data_full.js"></script>
+        <script type="text/javascript" src="echarts.js"></script>
+        <script type="module">
+            
+            var chartDom = document.getElementById('main');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            const dates = [];
+            const cases = {   Totalt_antal_fall: [],
+                            Blekinge: [],
+                            Dalarna: [],
+                            Gotland: [],
+                            Gavleborg: [],
+                            Halland: [],
+                            Jamtland_Harjedalen: [],
+                            Jonkoping: [],
+                            Kalmar: [],
+                            Kronoberg: [],
+                            Norrbotten: [],
+                            Skane: [],
+                            Stockholm: [],
+                            Sormland: [],
+                            Uppsala: [],
+                            Varmland: [],
+                            Vasterbotten: [],
+                            Vasternorrland: [],
+                            Vastmanland: [],
+                            Vastra_Gotaland: [],
+                            Orebro: [],
+                            Ostergotland: []};
+
+            for(let i = 0; i < data.length; i++){
+                dates.push(data[i].Statistikdatum)
+               
+                
+                delete data[i].Statistikdatum
+
+                for(const region in data[i]){
+                    cases[region].push(parseInt(data[i][region]))
+                }
+                    
+            }
+
+            const dataset = []
+
+            for(const key in cases){
+                dataset.push({
+                    data: cases[key],
+                    type: 'line'
+                })
+            }
+
+            option = {
+                xAxis: {
+                    type: 'category',
+                    data: dates
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: dataset
+            };
+
+            console.time();
+
+            option && myChart.setOption(option);
+
+            let lastElement = document.getElementById("main")
+
+            const myInterval = setInterval(function(){
+                if(lastElement.childNodes.length > 0) {
+                    console.timeEnd()
+                    clearInterval(myInterval)
+                }
+            }, 10)
+
+
+        </script>
+    </body>
+</html>

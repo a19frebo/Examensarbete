@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chartist@0.11.4/dist/chartist.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/chartist@0.11.4/dist/chartist.min.js"></script>
+        <script type="text/javascript" src="../dataset/data_full.js"></script>
+        <script>
+
+
+            for(let i = 0; i < 11; i++) {
+                let div = document.createElement("div")
+                div.setAttribute("class", "ct-chart ct-perfect-fourth")
+                div.setAttribute("id", "graph"+i)
+                div.setAttribute("style", "width: 1000px; height: 500px")
+                document.body.append(div);
+            }
+            const dates = [];
+            const cases = { Totalt_antal_fall: [],
+                            Blekinge: [],
+                            Dalarna: [],
+                            Gotland: [],
+                            Gavleborg: [],
+                            Halland: [],
+                            Jamtland_Harjedalen: [],
+                            Jonkoping: [],
+                            Kalmar: [],
+                            Kronoberg: [],
+                            Norrbotten: [],
+                            Skane: [],
+                            Stockholm: [],
+                            Sormland: [],
+                            Uppsala: [],
+                            Varmland: [],
+                            Vasterbotten: [],
+                            Vasternorrland: [],
+                            Vastmanland: [],
+                            Vastra_Gotaland: [],
+                            Orebro: [],
+                            Ostergotland: []};
+
+            for(let i = 0; i < data.length; i++){
+                dates.push(data[i].Statistikdatum)
+               
+                
+                delete data[i].Statistikdatum
+
+                for(const region in data[i]){
+                    cases[region].push(parseInt(data[i][region]))
+                }
+                    
+            }
+
+            const dataset = []
+
+            for(const key in cases){
+                dataset.push({
+                    data: cases[key]
+                })
+            }
+
+            let options = {
+                width: '1000px',
+                height: '500px',
+                showArea: true
+            }
+
+            let dataA = []
+
+            for(let i = 0; i < 22; i+=2) {
+                dataA[i/2] = {
+                    labels: dates,
+                    series: dataset.slice(i, i+2)
+                }
+            }
+
+            /*var dataA = {
+                labels: dates,
+                series: dataset
+            };*/
+
+            // Create a new line chart object where as first parameter we pass in a selector
+            // that is resolving to our chart container element. The Second parameter
+            // is the actual data object.
+
+
+            console.time()
+
+            for(let i = 0; i < 11; i++) {
+                new Chartist.Line('#graph'+i, dataA[i], options);
+            }
+
+            let lastElement = document.getElementById("graph10")
+
+            const myInterval = setInterval(function(){
+                if(lastElement.childNodes.length > 0) {
+                    console.timeEnd()
+                    clearInterval(myInterval)
+                }
+            }, 10)
+
+
+        </script>
+    </body>
+</html>
